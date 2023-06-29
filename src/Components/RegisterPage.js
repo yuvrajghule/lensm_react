@@ -1,56 +1,31 @@
 import { useState } from "react";
 import "./login.css";
-import {Link} from "react-router-dom";
+import {Link, Navigate, useNavigate} from "react-router-dom";
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function RegisterPage(){
-    const [email, setEmail] = useState("");
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [cpassword, setCpassword] = useState("");
-    const [mobilenumber, setMobileNumber] = useState("");
+  const navigate=useNavigate();
+    const [user, setUser] = useState(
+      { 
+        userName:"",
+        email:"",
+        password:"",
+        mobileNumber:"",
+        confirmpassword:""
+      }
+    );
+
 
     const handleSignup = async (e) => {
+      console.log(user);
         e.preventDefault();
-        
-          
-    try {
-        const response = await fetch('http://localhost:8080/api/signup', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email,
-            username,
-            mobilenumber,
-            password,
-          }),
-        });
-          
-          if (response.ok){
-            // Signup successful
-            // Perform any action, such as displaying a success message or redirecting
-            console.log("signup successfully")
-            console.log(email)
-            console.log(mobilenumber)
-            alert("signup successfully")
-
-          }
-          else
-          {
-            console.log("signup failed")
-            console.log(email)
-            console.log(mobilenumber)
-            // Signup failed
-            // Perform any action, such as displaying an error message
-          }
-        } catch (error) {
-            console.log(error)
-          // Handle request error
-          // Perform any action, such as displaying an error message
-        }
-      };
+        const response = axios.post('http://localhost:8080/signup',user).then((response)=>{
+          toast("Registration succesfull")
+          console.log(response.data)
+          navigate('/');
+    }).catch((error)=>console.log(error));
+    }
     return(
         <>
         
@@ -58,12 +33,11 @@ export default function RegisterPage(){
         <div id="registerBox">
         <h1 style={{color: "blue"}}>Sign Up</h1>
         <form onSubmit={handleSignup}>
-        <input className="input" id="email" onChange={(e) => setEmail(e.target.value)} placeholder="Enter email"></input><br />
-        <input className="input" id="username" onChange={(e) => setUsername(e.target.value)} placeholder="Enter username"></input><br />
-        <input className="input" onChange={(e) => setMobileNumber(e.target.value)} id="mobileNumber" placeholder="Enter Mobilenumber"></input><br />
-
-        <input className="input" type="password" onChange={(e) => setPassword(e.target.value)} id="password" placeholder="password"></input><br />
-        <input className="input" type="password" onChange={(e) => setCpassword(e.target.value)} id="cpassword" placeholder="Confirm password"></input><br />
+        <input className="input" id="email" onChange={(e) => setUser({...user,email:e.target.value})} placeholder="Enter email"></input><br />
+        <input className="input" id="username" onChange={(e) => setUser({...user,userName:e.target.value})} placeholder="Enter username"></input><br />
+        <input className="input" onChange={(e) => setUser({...user,mobileNumber:e.target.value})} id="mobileNumber" placeholder="Enter Mobilenumber"></input><br />
+        <input className="input" type="password" onChange={(e) => setUser({...user,password:e.target.value})} id="password" placeholder="password"></input><br />
+        <input className="input" type="password" onChange={(e) => setUser({...user,confirmpassword:e.target.value})} id="cpassword" placeholder="confirm password"></input><br />
       
         <div><button id="submitButton">Submit</button></div>
         </form>
